@@ -1,7 +1,6 @@
 package genomicrangequery
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -23,7 +22,6 @@ func Solution(S string, P []int, Q []int) []int {
 
 		min := math.MaxInt64
 		for j, n := range nucs {
-			fmt.Println(string(j), sums[j][q+1]-sums[j][p] > 0, n < min)
 			if sums[j][q+1]-sums[j][p] > 0 && n < min {
 				M[i] = n
 				min = n
