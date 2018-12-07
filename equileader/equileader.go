@@ -1,38 +1,32 @@
 package equileader
 
 func Solution(A []int) int {
-	total := 0
-	leader := getLeader(A)
+	equileaders := 0
+	leader, count := getLeader(A)
 	if leader == -1 {
 		return 0
 	}
 
-	leaderSum := make([]int, len(A)+1)
-
-	for i := 0; i < len(A); i++ {
-		leaderSum[i+1] = leaderSum[i]
-		if A[i] == leader {
-			leaderSum[i+1]++
-		}
-	}
-
 	N := len(A)
-	for i := 1; i < N; i++ {
-		leftSize := i
+	leftCount := 0
+	for i, e := range A {
+		if e == leader {
+			leftCount++
+		}
+		leftSize := i + 1
 		rightSize := N - leftSize
 
-		countLeft := leaderSum[i]
-		countRight := leaderSum[N] - countLeft
+		rightCount := count - leftCount
 
-		if countLeft > leftSize/2 && countRight > rightSize/2 {
-			total++
+		if leftCount > leftSize/2 && rightCount > rightSize/2 {
+			equileaders++
 		}
 	}
 
-	return total
+	return equileaders
 }
 
-func getLeader(A []int) int {
+func getLeader(A []int) (int, int) {
 	leaderCount := make(map[int]int)
 
 	currLeader := 0
@@ -44,8 +38,8 @@ func getLeader(A []int) int {
 	}
 
 	if leaderCount[currLeader] > len(A)/2 {
-		return currLeader
+		return currLeader, leaderCount[currLeader]
 	}
 
-	return -1
+	return -1, 0
 }
