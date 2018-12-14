@@ -1,30 +1,27 @@
 package peaks
 
 import (
-	"fmt"
 	"sort"
 )
 
 func Solution(A []int) int {
 	N := len(A)
-	peaks := getPeaks(A)
+
+	if N < 3 {
+		return 0
+	}
+
+	total, peaks := getPeaks(A)
 	divs := getDivisors(N)
 
-	fmt.Println("--------------------")
-	fmt.Println("peaks:", peaks)
-	fmt.Println("factors:", divs)
-
-	if len(peaks) == 0 {
+	if total == 0 {
 		return 0
 	}
 
 	for _, f := range divs {
-		fmt.Println("factor:", f)
 		hasPeak := true
 		for j := 0; j < N; j = j + f {
-			fmt.Println("block:", j, j+f-1)
-			if !peakExists(peaks, j, j+f, N) {
-				fmt.Println("    no peak in block")
+			if !peakExists(peaks, j, j+f) {
 				hasPeak = false
 				break
 			}
@@ -38,32 +35,32 @@ func Solution(A []int) int {
 	return 1
 }
 
-func peakExists(peaks []int, start int, end int, N int) bool {
-	fmt.Println("checking peaks between:", start, end)
-	for i, p := range peaks {
-		if i > end {
-			break
-		}
-		fmt.Printf("p=%d, start=%d, end=%d, N=%d\n", p, start, end, N)
-		if (p >= start) && (p < end) {
-			fmt.Println("    peak was found")
-			return true
-		}
+func peakExists(peaks []int, s int, e int) bool {
+	var start, end int
+	if s-1 < 0 {
+		start = 0
+	} else {
+		start = peaks[s-1]
 	}
 
-	return false
+	end = peaks[e-1]
+
+	return end-start > 0
 }
 
-func getPeaks(A []int) []int {
-	peaks := make([]int, 0)
+func getPeaks(A []int) (int, []int) {
+	peaks := make([]int, len(A))
+	totalPeaks := 0
 
-	for i := 1; i < len(A)-1; i++ {
-		if A[i] > A[i-1] && A[i] > A[i+1] {
-			peaks = append(peaks, i)
+	for i := 1; i < len(A); i++ {
+		peaks[i] = peaks[i-1]
+		if i+1 < len(A) && A[i] > A[i-1] && A[i] > A[i+1] {
+			totalPeaks++
+			peaks[i]++
 		}
 	}
 
-	return peaks
+	return totalPeaks, peaks
 }
 
 func getDivisors(N int) []int {
